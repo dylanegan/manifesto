@@ -58,7 +58,7 @@ describe 'Release' do
     end
 
     it "should ensure the current release is correct" do
-      @other_release.components.to_json.must_equal Manifesto.storage.directories.get(Manifesto.bucket).files.get("#{release.manifest.name}-current.json").body
+      @other_release.components.to_json.to_s.must_equal Manifesto.storage.directories.get(Manifesto.bucket).files.get("#{release.manifest.name}-current.json").body
     end
 
     it "should destroy all files if there is no release" do
