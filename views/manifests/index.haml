@@ -1,0 +1,20 @@
+%h1 Manifests
+
+%a.new.btn.primary{:href => "/manifests/new"} New Manifest
+
+- if @manifests.any?
+  %table.bordered-table.zebra-striped
+    %thead
+      %tr
+        %th Name
+        %th Follow
+    %tbody
+      - @manifests.each do |manifest|
+        %tr{:class => "manifest manifest-#{manifest.id}"}
+          %td.name
+            %a{:href => "/manifests/#{manifest.name}"}= manifest.name
+          %td.follow
+            - if followee = manifest.followee
+              %a{:href => "/manifests/#{followee.name}"}= followee.name
+              - if override = manifest.follower_override
+                = "(#{override.collect { |component, version| "#{component} at #{version}" }.join(', ')})"

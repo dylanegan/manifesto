@@ -1,0 +1,18 @@
+%h1 New Manifest
+
+.new-manifest
+  - unless @manifest.errors.empty?
+    .error
+      %ul
+        - @manifest.errors.full_messages.each do |message|
+          %li= message
+
+  %form{:action => "/manifests", :method => "post"}
+    != csrf_tag
+    .clearfix
+      %label{:for => 'manifest_name'} Name
+      .input
+        %input{:id => 'manifest_name', :name => 'manifest[name]', :type => 'text'}
+
+    .actions
+      %input.btn.primary{:type => "submit", :value => "Create"}

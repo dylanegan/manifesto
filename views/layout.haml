@@ -1,0 +1,28 @@
+!!! 5
+%html
+  %head
+    %title Manifesto
+    %link{:rel=>'stylesheet', :href=>'/stylesheets/bootstrap.min.css', :type => "text/css"}
+    %link{:rel=>'stylesheet', :href=>'/stylesheets/application.css', :type => "text/css"}
+%body
+  .topbar
+    .topbar-inner
+      .container
+        %h3
+          %a{:href => "/"} Manifesto
+        %ul.nav
+          %li
+            %a{:href => "/manifests"} Manifests
+          %li
+            %a{:href => "/api_keys"} API Keys
+
+  .container
+    .row
+      .span12.columns
+        - if @notice = flash[:notice]
+          .alert-message.success
+            %a.close{href: '#'} x
+            %p= @notice
+
+  #content.container
+    != yield

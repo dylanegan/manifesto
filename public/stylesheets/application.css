@@ -1,0 +1,15 @@
+body {
+  padding-top: 40px;
+}
+
+#content {
+  margin-top: 10px;
+}
+
+a.btn {
+  margin-bottom: 10px
+}
+
+td.action form {
+  margin-bottom: 0px;
+}

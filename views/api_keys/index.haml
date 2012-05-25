@@ -1,0 +1,38 @@
+%h1 API Keys
+
+.new-api_key
+  %form{:action => '/api_keys', :method => :post}
+    != csrf_tag
+    .clearfix
+      %label{:for => 'api_key_username'} Username
+      .input
+        %input{:type => 'text', :id => 'api_key_username', :name => 'api_key[username]'}
+
+    .actions
+      %input.btn.primary{:type => 'submit', :value => 'Create'}
+
+- if @success = flash[:success]
+  - message, key, expires_at = @success.split('|')
+  .alert-message.block-message.success{'data-alert' => 'alert'}
+    %a.close{:href => '#'} x
+    %h3= message
+    %p
+      %strong Expires:
+      = expires_at
+    %pre= key
+    .alert-actions
+      %a.btn.small.disabled{:href => '#'} Copy to clipboard
+
+- if @api_keys.any?
+  %table.bordered-table.zebra-striped
+    %thead
+      %tr
+        %th Username
+        %th Key
+        %th Expires At
+    %tbody
+      - @api_keys.each do |api_key|
+        %tr{:class => "api_key api_key-#{api_key.id}"}
+          %td.username= api_key.username
+          %td.key= "#{api_key.key[0..15]}..."
+          %td.expires_at= api_key.expires_at

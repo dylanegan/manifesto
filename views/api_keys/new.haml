@@ -1,0 +1,18 @@
+%h1 New API Key
+
+.new-api_key
+  - unless @api_key.errors.empty?
+    .error
+      %ul
+        - @api_key.errors.full_messages.each do |message|
+          %li= message
+
+  %form{:action => '/api_keys', :method => :post}
+    != csrf_tag
+    .clearfix
+      %label{:for => 'api_key_username'} Username
+      .input
+        %input{:type => 'text', :id => 'api_key_username', :name => 'api_key[username]', :value => @api_key.username}
+
+    .actions
+      %input.btn.primary{:type => 'submit', :value => 'Create'}

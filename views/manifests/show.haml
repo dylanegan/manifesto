@@ -1,0 +1,25 @@
+%h1= "Manifest #{@manifest.name}"
+
+- if followee = @manifest.followee
+  %h2 Following
+  %a{:href => "/manifests/#{followee.name}"}= followee.name
+  - if override = @manifest.follower_override
+    = "(#{override.collect { |component, version| "#{component} at #{version}" }.join(', ')})"
+
+- if @manifest.releases.any?
+  %h2 Releases
+
+  %table#releases.bordered-table.zebra-striped
+    %thead
+      %tr
+        %th Version
+        %th Diff
+        %th Created
+
+    %tbody
+      - @manifest.releases_dataset.order(:version).reverse.each do |release|
+        %tr{:id => "release-#{release.id}"}
+          %td.version
+            %a{:href => "https://#{Manifesto.bucket}.s3.amazonaws.com/#{@manifest.name}-#{release.version}.json"}= release.version
+          %td.diff= release.diff
+          %td.created_at= release.created_at
