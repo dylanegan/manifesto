@@ -1,6 +1,6 @@
 require 'helper'
 
-describe Manifest do
+describe 'Manifest' do
   let(:manifest) { new_manifest }
 
   # Properties

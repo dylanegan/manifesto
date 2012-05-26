@@ -1,18 +1,13 @@
 # /usr/bin/env ruby
-$: << "./lib"
-
-require 'securerandom'
-require 'sinatra/base'
-require 'json'
+$: << File.dirname(__FILE__) + "/../../lib"
 
 require 'manifesto'
+
+require 'sinatra/base'
 require 'haml'
 require 'omniauth/strategies/google_apps'
 require 'openid/store/sequel'
-require 'rack/request'
 require 'rack/csrf'
-require 'rack-flash'
-require 'sequel'
 
 module Manifesto
   class Application < Sinatra::Base
@@ -25,21 +20,19 @@ module Manifesto
     configure :test do
       DB = Sequel.connect(ENV['DATABASE_URL'] || 'postgres://localhost/manifesto_testing')
       Sequel.extension :migration
-      Sequel::Migrator.run(DB, File.expand_path(File.dirname(__FILE__) + "/migrations"))
+      Sequel::Migrator.run(DB, File.expand_path(File.dirname(__FILE__) + "/../../migrations"))
 
       enable :raise_errors
     end
 
-    # Load models
-    require './models/api_key'
-    require './models/manifest'
-    require './models/release'
-
-    use Rack::Flash
     set :static, true
-    set :root, File.dirname(__FILE__)
+    set :root, File.dirname(__FILE__) + '/../../'
 
     set :haml, :escape_html => true
+
+    require File.dirname(__FILE__) + '/../../models/api_key'
+    require File.dirname(__FILE__) + '/../../models/manifest'
+    require File.dirname(__FILE__) + '/../../models/release'
 
     before do
       unless request.path_info =~ /\/auth/
@@ -68,7 +61,6 @@ module Manifesto
           'first_name' => user['first_name'],
           'last_name' => user['last_name']
         }
-        flash[:notice] = "Logged in."
       end
       redirect to('/')
     end
@@ -205,8 +197,7 @@ module Manifesto
     post '/api_keys' do
       @api_key = APIKey.new(params[:api_key])
       if @api_key.save(:raise_on_failure => false)
-        flash[:success] = "API Key Created|#{@api_key.key}|#{@api_key.expires_at}"
-        redirect '/api_keys'
+        haml :'api_keys/index'
       else
         haml :'api_keys/new'
       end
@@ -252,7 +243,6 @@ module Manifesto
           'first_name' => user['first_name'],
           'last_name' => user['last_name']
         }
-        flash[:notice] = "Logged in."
       end
       redirect to('/')
     end

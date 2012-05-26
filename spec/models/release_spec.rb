@@ -1,6 +1,6 @@
 require 'helper'
 
-describe Release do
+describe 'Release' do
   let(:manifest) { create_manifest }
   let(:release) { new_release(:manifest_id => manifest.id) }
 

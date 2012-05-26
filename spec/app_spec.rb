@@ -32,7 +32,7 @@ describe Manifesto::Application do
         follow_redirect!
         follow_redirect!
         follow_redirect!
-        last_response.body.must_include('Logged in.')
+        last_response.body.must_include('New Manifest')
       end
 
       it "should log out the user" do

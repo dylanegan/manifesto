@@ -16,13 +16,5 @@
           %li
             %a{:href => "/api_keys"} API Keys
 
-  .container
-    .row
-      .span12.columns
-        - if @notice = flash[:notice]
-          .alert-message.success
-            %a.close{href: '#'} x
-            %p= @notice
-
   #content.container
     != yield

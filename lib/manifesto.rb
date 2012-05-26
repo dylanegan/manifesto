@@ -64,3 +64,8 @@ module Manifesto
     })
   end
 end
+
+require 'securerandom'
+require 'json'
+require 'sequel'
+

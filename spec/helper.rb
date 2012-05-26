@@ -6,7 +6,8 @@ ENV['AWS_SECRET_ACCESS_KEY'] ||= 'abcdefghijklmnopqrstuvwxyz'
 ENV['GOOGLE_OAUTH_DOMAIN'] = 'example.com'
 ENV["RACK_ENV"] = 'test'
 
-require File.join(File.dirname(__FILE__), '..','app.rb')
+require File.join(File.dirname(__FILE__), '..','lib', 'manifesto', 'application')
+require File.join(File.dirname(__FILE__), '..','lib', 'manifesto', 'api', 'v1')
 
 require 'sinatra'
 require 'rack/test'

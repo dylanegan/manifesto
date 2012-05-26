@@ -1,4 +1,7 @@
+<<<<<<< HEAD
 .env
+=======
+>>>>>>> 252fdee... Start overhaul to separate API from Application. Remove rack-flash.
 *.gem
 *.rbc
 *.swp
