@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'helper'
 
 describe Manifest do
   let(:manifest) { new_manifest }

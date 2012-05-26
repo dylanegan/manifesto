@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'helper'
 
 describe Release do
   let(:manifest) { create_manifest }

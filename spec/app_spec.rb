@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'helper'
 
 describe Manifesto::Application do
   include Rack::Test::Methods
