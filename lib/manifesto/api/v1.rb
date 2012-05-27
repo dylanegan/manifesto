@@ -1,13 +1,22 @@
 require "grape"
+require "manifesto"
 
 module Manifesto
   module API
     class V1 < Grape::API
+      default_format :json
+      format :json
       version 'v1', :using => :header, :vendor => 'manifesto'
 
       http_basic do |user, password|
         APIKey.where(:username => user, :key => password).first
       end
+
+      Manifesto.setup_database(ENV['RACK_ENV'])
+
+      require File.dirname(__FILE__) + '/../../../models/api_key'
+      require File.dirname(__FILE__) + '/../../../models/manifest'
+      require File.dirname(__FILE__) + '/../../../models/release'
 
       resource :manifests do
         get ':name' do

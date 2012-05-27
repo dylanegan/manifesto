@@ -12,6 +12,7 @@ gem 'rake'
 gem 'scrolls'
 gem 'sequel'
 gem 'sinatra'
+gem 'thin'
 
 group :test do
   gem 'database_cleaner'

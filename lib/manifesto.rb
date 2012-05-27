@@ -56,6 +56,17 @@ module Manifesto
     @logging ||= false
   end
 
+  def self.setup_database(env)
+    return @database if @database
+    @database = Sequel.connect(ENV['DATABASE_URL'] || "postgres://localhost/manifesto_#{env}")
+    case env.to_sym
+    when :test
+      Sequel.extension :migration
+      Sequel::Migrator.run(@database, File.expand_path(File.dirname(__FILE__) + "/../migrations"))
+    end
+    @database
+  end
+
   def self.storage
     @storage ||= Fog::Storage.new({
       :provider => 'AWS',

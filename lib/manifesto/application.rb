@@ -1,6 +1,3 @@
-# /usr/bin/env ruby
-$: << File.dirname(__FILE__) + "/../../lib"
-
 require 'manifesto'
 
 require 'sinatra/base'
@@ -13,15 +10,9 @@ module Manifesto
   class Application < Sinatra::Base
     $stdout.sync = true
 
-    configure :development, :production do
-      DB = Sequel.connect(ENV['DATABASE_URL'] || 'postgres://localhost/manifesto_development')
-    end
+    Manifesto.setup_database(ENV['RACK_ENV'])
 
     configure :test do
-      DB = Sequel.connect(ENV['DATABASE_URL'] || 'postgres://localhost/manifesto_testing')
-      Sequel.extension :migration
-      Sequel::Migrator.run(DB, File.expand_path(File.dirname(__FILE__) + "/../../migrations"))
-
       enable :raise_errors
     end
 
@@ -61,7 +52,7 @@ module Manifesto
 
     post '/auth/google_apps/callback' do
       unless session['user']
-        user = env['omniauth.auth']['user_info']
+        user = env['omniauth.auth']['info']
         email = user['email'].is_a?(Array) ? user['email'].first : user['email']
         email = email.downcase
         session['user'] = {
@@ -112,13 +103,13 @@ module Manifesto
 
     get '/api_keys' do
       @api_keys = APIKey.order(:username, :expires_at)
-      @api_key = APIKey.new
       haml :'api_keys/index'
     end
 
     post '/api_keys' do
       @api_key = APIKey.new(params[:api_key])
       if @api_key.save(:raise_on_failure => false)
+        @api_keys = APIKey.order(:username, :expires_at)
         haml :'api_keys/index'
       else
         haml :'api_keys/new'

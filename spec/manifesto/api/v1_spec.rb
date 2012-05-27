@@ -1,7 +1,5 @@
 require 'helper'
 
-puts Manifesto::API::V1::routes.inspect
-
 describe Manifesto::API::V1 do
   include Rack::Test::Methods
 
