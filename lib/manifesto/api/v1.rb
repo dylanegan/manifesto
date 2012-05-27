@@ -5,6 +5,10 @@ module Manifesto
     class V1 < Grape::API
       version 'v1', :using => :header, :vendor => 'manifesto'
 
+      http_basic do |user, password|
+        APIKey.where(:username => user, :key => password).first
+      end
+
       resource :manifests do
         get ':name' do
           if @manifest = Manifest.where(:name => params[:name]).first

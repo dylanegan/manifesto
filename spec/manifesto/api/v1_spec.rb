@@ -11,14 +11,27 @@ describe Manifesto::API::V1 do
 
   before do
     header 'Accept', 'application/vnd.manifesto-v1+json'
+
+    @api_key = APIKey.new(:username => 'shawesome')
+    @api_key.save
+    basic_authorize 'shawesome', @api_key.key
+  end
+
+  describe "authentication" do
+    it "should authenticate with legitimate credentials" do
+      get '/manifests/manifest'
+      last_response.status.wont_equal 401
+    end
+
+    it "shouldn't authenticate with illegitimate credentials" do
+      basic_authorize 'fail', 'fail'
+      get '/manifests/manifest'
+      last_response.status.must_equal 401
+    end
   end
 
   describe "cutting a new manifest release" do
     before do
-      #@api_key = APIKey.new(:username => 'shawesome')
-      #@api_key.save
-
-      #basic_authorize 'shawesome', @api_key.key
       @manifest = create_manifest
       @release = create_release(:manifest_id => @manifest.id)
 
@@ -44,10 +57,6 @@ describe Manifesto::API::V1 do
 
   describe "GET manifest.json" do
     before do
-      #@api_key = APIKey.new(:username => 'shawesome')
-      #@api_key.save
-
-      #basic_authorize 'shawesome', @api_key.key
       @manifest = create_manifest
     end
 
@@ -68,10 +77,6 @@ describe Manifesto::API::V1 do
 
   describe "forking a manifest" do
     before do
-      #@api_key = APIKey.new(:username => 'shawesome')
-      #@api_key.save
-      #basic_authorize 'shawesome', @api_key.key
-
       @manifest = create_manifest
       @release = create_release(:manifest_id => @manifest.id)
 
@@ -90,10 +95,6 @@ describe Manifesto::API::V1 do
 
   describe "following a manifest" do
     before do
-      #@api_key = APIKey.new(:username => 'shawesome')
-      #@api_key.save
-      #basic_authorize 'shawesome', @api_key.key
-
       @manifest = create_manifest
 
       post "/manifests/#{@manifest.name}/follow", { 'name' => 'follower', 'follower_override' => { 'other' => 'amazing' } }.to_json
@@ -133,10 +134,6 @@ describe Manifesto::API::V1 do
 
   describe "destroying a manifest" do
     before do
-      #@api_key = APIKey.new(:username => 'shawesome')
-      #@api_key.save
-      #basic_authorize 'shawesome', @api_key.key
-
       @manifest = create_manifest
 
       delete "/manifests/#{@manifest.name}"
