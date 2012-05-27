@@ -30,6 +30,16 @@ module Manifesto
 
     set :haml, :escape_html => true
 
+    use Rack::Session::Cookie, :key => 'rack.session',
+      :expire_after => 1209600,
+      :secret => ENV['RACK_COOKIE_SECRET'] || raise("missing RACK_COOKIE_SECRET")
+
+    use OmniAuth::Builder do
+      provider :google_apps, domain: ENV['GOOGLE_OAUTH_DOMAIN'], store: OpenID::Store::Sequel.new
+    end
+
+    use Rack::Csrf, :raise => true, :skip => ['POST:/auth/.*', 'GET:/auth/.*']
+
     require File.dirname(__FILE__) + '/../../models/api_key'
     require File.dirname(__FILE__) + '/../../models/manifest'
     require File.dirname(__FILE__) + '/../../models/release'
@@ -44,7 +54,6 @@ module Manifesto
       redirect '/manifests'
     end
 
-    # Auth
     get '/auth/logout' do
       session.clear
       "You're logged out. <a href='/'>Login</a>"
@@ -73,15 +82,9 @@ module Manifesto
       halt 401, haml(:'auth/401', :layout => false)
     end
 
-    # Manifests
-    get '/manifests.?:format?' do
+    get '/manifests' do
       @manifests = Manifest.order(:name)
-      if params[:format] == "json"
-        content_type :json
-        @manifests.to_json
-      else
-        haml :'manifests/index'
-      end
+      haml :'manifests/index'
     end
 
     get '/manifests/new' do
@@ -99,14 +102,6 @@ module Manifesto
       haml :'manifests/new'
     end
 
-    get '/manifests/:name.json' do
-      if @manifest = Manifest.where(:name => params[:name]).first
-        @manifest.to_json
-      else
-        404
-      end
-    end
-
     get '/manifests/:name' do
       if @manifest = Manifest.where(:name => params[:name]).first
         haml :'manifests/show'
@@ -115,79 +110,6 @@ module Manifesto
       end
     end
 
-    put '/manifests/:name' do
-      content_type :json
-
-      @manifest = Manifest.where(:name => params[:name]).first
-      manifest = JSON.parse(request.body.read.to_s)
-      if @manifest.update(manifest)
-        201
-      else
-        500
-      end
-    end
-
-    delete '/manifests/:name' do
-      content_type :json
-
-      @manifest = Manifest.where(:name => params[:name]).first
-      if @manifest.destroy
-        200
-      else
-        500
-      end
-    end
-
-    get '/manifests/:name/current' do
-      content_type :json
-      @manifest = Manifest.where(:name => params[:name]).first
-      @manifest.current.components.to_json
-    end
-
-    get '/manifests/:name/releases.?:format?' do
-      content_type :json
-      @manifest = Manifest.where(:name => params[:name]).first
-      @manifest.releases.to_json
-    end
-
-    post '/manifests/:name/release' do
-      content_type :json
-
-      @manifest = Manifest.where(:name => params[:name]).first
-      if @release = @manifest.release(JSON.parse(request.body.read.to_s))
-        status(201)
-        @release.to_json
-      else
-        403
-      end
-    end
-
-    post '/manifests/:name/fork' do
-      content_type :json
-
-      @manifest = Manifest.where(:name => params[:name]).first
-      if @fork = @manifest.fork(JSON.parse(request.body.read.to_s))
-        status(201)
-        @fork.to_json
-      else
-        500
-      end
-    end
-
-    post '/manifests/:name/follow' do
-      content_type :json
-
-      follower = JSON.parse(request.body.read.to_s)
-
-      @manifest = Manifest.where(:name => params[:name]).first
-      if @manifest.add_follower(follower)
-        201
-      else
-        500
-      end
-    end
-
-    # API keys
     get '/api_keys' do
       @api_keys = APIKey.order(:username, :expires_at)
       @api_key = APIKey.new
@@ -215,16 +137,7 @@ module Manifesto
 
     def authenticate_or_redirect!
       unless current_user
-        if request.env['HTTP_ACCEPT'] =~ /application\/json/i
-          auth = Rack::Auth::Basic::Request.new(request.env)
-          if (api_key = APIKey.first(:username => auth.credentials[0], :key => auth.credentials[1]))
-            @current_user = api_key
-          else
-            halt 401
-          end
-        else
-          redirect(to('/auth/unauthorized'))
-        end
+        redirect(to('/auth/unauthorized'))
       end
     end
 

@@ -4,6 +4,7 @@ require 'minitest/autorun'
 ENV['AWS_ACCESS_KEY_ID'] ||= '1234567890'
 ENV['AWS_SECRET_ACCESS_KEY'] ||= 'abcdefghijklmnopqrstuvwxyz'
 ENV['GOOGLE_OAUTH_DOMAIN'] = 'example.com'
+ENV['RACK_COOKIE_SECRET'] = '1234567890'
 ENV["RACK_ENV"] = 'test'
 
 require File.join(File.dirname(__FILE__), '..','lib', 'manifesto', 'application')
