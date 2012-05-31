@@ -29,6 +29,7 @@ class Manifest < Sequel::Model
     components, diff = merge_current(components)
 
     if components.any?
+      components = components.delete_if {|k, v| v.nil? }
       release = add_release(:components => components, :diff => diff)
       update_followers(diff ? diff : components)
       release

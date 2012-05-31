@@ -75,6 +75,36 @@ describe Manifesto::Application do
     end
   end
 
+  describe "cutting a new release manifest by removing a component" do
+    before do
+      @api_key = APIKey.new(:username => 'shawesome')
+      @api_key.save
+
+      header 'Accept', 'application/json'
+      basic_authorize 'shawesome', @api_key.key
+      @manifest = create_manifest
+      @release = create_release(:manifest_id => @manifest.id, :components => { 'old_component' => 1, 'component' => 2 })
+
+      post "/manifests/#{@manifest.name}/release", { 'old_component' => nil }.to_json, :content_type => :json
+    end
+
+    it "should cut a new Release for the Manifest" do
+      @manifest.releases.count.should == 2
+    end
+
+    it "should not include the removed component in the release" do
+      @manifest.current.components.should == { 'component' => 2 }
+    end
+
+    it "returns the release" do
+      last_response.body.should == @manifest.current.to_json
+    end
+
+    it "should return created" do
+      last_response.status.should == 201
+    end
+  end
+
   describe "GET manifest.json" do
     before do
       @api_key = APIKey.new(:username => 'shawesome')
