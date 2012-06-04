@@ -1,5 +1,7 @@
 ![Manifesto](https://github.com/heroku/manifesto/raw/master/public/images/manifesto.jpg)
 
+[![Build Status](https://secure.travis-ci.org/dylanegan/manifesto.png?branch=master)](http://travis-ci.org/dylanegan/manifesto)
+
 The preamble to the main text of the Manifesto states that the continent of Europe fears the "spectre of communism", and the powers of old Europe are uniting in "a holy alliance [intended to] exorcise this spectre". Marx refers here to not only the houses of power and landed gentry of old Europe--the bourgeoisie--but diverse factions such as the papacy and the emerging corporate world as well.
 
 ## Deployment

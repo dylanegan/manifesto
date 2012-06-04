@@ -1,4 +1,7 @@
-env: NO_SIMPLECOV=true
+before_script:
+  - psql -c 'create database manifesto_test;' -U postgres
+
+env: NO_SIMPLECOV=true DATABASE_URL=postgres://postgres:@localhost/manifesto_test
 
 language: ruby
 

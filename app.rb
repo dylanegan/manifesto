@@ -23,7 +23,7 @@ module Manifesto
     end
 
     configure :test do
-      DB = Sequel.connect("sqlite::memory:")
+      DB = Sequel.connect(ENV['DATABASE_URL'] || 'postgres://localhost/manifesto_testing')
       Sequel.extension :migration
       Sequel::Migrator.run(DB, File.expand_path(File.dirname(__FILE__) + "/migrations"))
 

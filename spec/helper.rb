@@ -22,9 +22,13 @@ OmniAuth.config.test_mode = true
 
 # Database cleaner.
 require 'database_cleaner'
-DatabaseCleaner.strategy = :truncation
+DatabaseCleaner.strategy = :transaction
 class MiniTest::Spec
   before :each do
+    DatabaseCleaner.start
+  end
+
+  after :each do
     DatabaseCleaner.clean
   end
 end
