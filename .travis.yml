@@ -8,7 +8,7 @@ language: ruby
 rvm:
   - 1.9.2
   - 1.9.3
-  - jruby-19mode
+  # - jruby-19mode # http://travis-ci.org/#!/dylanegan/manifesto/jobs/1525115
   - rbx-19mode
 
 script: bundle exec rake test --trace
