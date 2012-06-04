@@ -89,19 +89,19 @@ describe Manifesto::Application do
     end
 
     it "should cut a new Release for the Manifest" do
-      @manifest.releases.count.should == 2
+      @manifest.releases.count.must_equal 2
     end
 
     it "should not include the removed component in the release" do
-      @manifest.current.components.should == { 'component' => 2 }
+      @manifest.current.components.must_equal({ 'component' => 2 })
     end
 
     it "returns the release" do
-      last_response.body.should == @manifest.current.to_json
+      last_response.body.must_equal @manifest.current.to_json
     end
 
     it "should return created" do
-      last_response.status.should == 201
+      last_response.status.must_equal 201
     end
   end
 
