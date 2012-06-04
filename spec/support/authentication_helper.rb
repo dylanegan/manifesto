@@ -16,7 +16,7 @@ end
 
 # Use with controller tests to fake the auth
 def stub_google_apps_auth
-  user = user_attributes['user_info']
+  user = user_attributes['info']
   email = user['email'].is_a?(Array) ? user['email'].first : user['email']
   request_env['rack.session']['user'] = {
     'identity_url' => user_attributes['uid'],

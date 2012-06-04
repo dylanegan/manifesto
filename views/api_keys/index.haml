@@ -11,15 +11,14 @@
     .actions
       %input.btn.primary{:type => 'submit', :value => 'Create'}
 
-- if @success = flash[:success]
-  - message, key, expires_at = @success.split('|')
+- if @api_key
   .alert-message.block-message.success{'data-alert' => 'alert'}
     %a.close{:href => '#'} x
-    %h3= message
+    %h3 API Key Created!
     %p
       %strong Expires:
-      = expires_at
-    %pre= key
+      = @api_key.expires_at
+    %pre= @api_key.key
     .alert-actions
       %a.btn.small.disabled{:href => '#'} Copy to clipboard
 
