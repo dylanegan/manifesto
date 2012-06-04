@@ -29,4 +29,4 @@ heroku ps:scale web=1
 * `GOOGLE_OAUTH_DOMAIN`: your Google oAuth domain
 * `RACK_COOKIE_SECRET`: to keep your cookies from the monsters
 
-![](https://github.com/dylanegan/manifesto/raw/master/public/images/cookie-monster.jpg)
+![](https://github.com/dylanegan/manifesto/raw/grape/public/images/cookie-monster.gif)
