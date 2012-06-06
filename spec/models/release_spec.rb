@@ -58,12 +58,18 @@ describe 'Release' do
     end
 
     it "should ensure the current release is correct" do
-      @other_release.components.to_json.to_s.must_equal Manifesto.storage.directories.get(Manifesto.bucket).files.get("#{release.manifest.name}-current.json").body
+      @other_release.components.to_json.must_equal Manifesto.storage.directories.get(Manifesto.bucket).files.get("#{release.manifest.name}-current.json").body
     end
 
     it "should destroy all files if there is no release" do
       @other_release.destroy
       Manifesto.storage.directories.get(Manifesto.bucket).files.get("#{release.manifest.name}-current.json").must_be_nil
+    end
+
+    it "should not fail when S3 file is missing" do
+      @other_release.stored_manifest.destroy
+      Release[@other_release.id].destroy
+      Release[@other_release.id].must_be_nil
     end
   end
 end

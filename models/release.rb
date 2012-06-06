@@ -67,8 +67,10 @@ class Release < Sequel::Model
 
   # Private: Destroy the stored manifest on S3
   def destroy_stored_manifest
-    stored_manifest.destroy
-    @stored_manifest = nil
+    if stored_manifest
+      stored_manifest.destroy
+      @stored_manifest = nil
+    end
   end
 
   # Private: The directory used for storing the manifest
