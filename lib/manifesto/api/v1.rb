@@ -58,7 +58,8 @@ module Manifesto
 
         post ':name/release' do
           @manifest = Manifest.where(:name => params[:name]).first
-          if @release = @manifest.release(JSON.parse(request.body.read.to_s))
+          release = JSON.parse(request.body.read.to_s)
+          if @release = @manifest.release(release, release.delete('scope'))
             @release
           else
             403

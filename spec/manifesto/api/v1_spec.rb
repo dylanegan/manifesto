@@ -51,6 +51,13 @@ describe Manifesto::API::V1 do
     it "should return created" do
       last_response.status.must_equal 201
     end
+
+    describe "with scope" do
+      it "should merge the release components" do
+        post "/manifests/#{@manifest.name}/release", { 'scope' => 'scope', 'other_component' => '1' }.to_json
+        @manifest.current.components.must_equal({ 'component' => '1', 'other_component' => '1', 'scope' => { 'other_component' => '1' } })
+      end
+    end
   end
 
   describe "GET manifest.json" do
