@@ -88,5 +88,22 @@ describe 'Manifest' do
     it "should not cut duplicate releases" do
       manifest.releases.count.must_equal 2
     end
+
+    describe "with scope" do
+      before do
+        manifest.release({ 'scope' => { 'inside' => 1 } })
+      end
+
+      it "should respect the scope" do
+        manifest.release({ 'inside' => 2 }, 'scope')
+        manifest.releases.last.components.must_equal({ 'component' => 2, 'scope' => { 'inside' => 2 }})
+
+        manifest.release({ 'inside' => 1 })
+        manifest.releases.last.components.must_equal({ 'component' => 2, 'scope' => { 'inside' => 2 }, 'inside' => 1 })
+
+        manifest.release({ 'inside' => 1 }, 'scope/scoped')
+        manifest.releases.last.components.must_equal({ 'component' => 2, 'scope' => { 'inside' => 2, 'scoped' => { 'inside' => 1 } }, 'inside' => 1 })
+      end
+    end
   end
 end
