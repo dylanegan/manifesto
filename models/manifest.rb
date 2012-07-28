@@ -47,15 +47,13 @@ class Manifest < Sequel::Model
     components = components.delete_if {|k, v| v.nil? }
     release = add_release(:components => components, :diff => diff, :initial => current.nil?)
     update_followers(diff ? diff : components)
-    release 
+    release
   end
 
   private
 
   def after_create
-    unless forking?
-      release({})
-    end
+    release({}) unless forking?
   end
 
   def before_destroy
