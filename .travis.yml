@@ -9,6 +9,6 @@ rvm:
   - 1.9.2
   - 1.9.3
   # - jruby-19mode # http://travis-ci.org/#!/dylanegan/manifesto/jobs/1525115
-  - rbx-19mode
+  # - rbx-19mode # http://travis-ci.org/#!/dylanegan/manifesto/jobs/1976984
 
 script: bundle exec rake test --trace
