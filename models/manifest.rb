@@ -1,3 +1,5 @@
+require "manifesto/core_ext/hash/deep_merge"
+
 class Manifest < Sequel::Model
   one_to_many :followers, :class => self, :key => :followee_id
   many_to_one :followee, :class => self, :key => :followee_id
@@ -24,18 +26,17 @@ class Manifest < Sequel::Model
     releases_dataset.order(:version).last
   end
 
-  def release(components = {})
+  def release(components = {}, scope = nil)
+    components = scope_for(components, scope) if scope
     components = merge_follower(components)
     components, diff = merge_current(components)
 
-    if components.any?
-      components = components.delete_if {|k, v| v.nil? }
-      release = add_release(:components => components, :diff => diff)
-      update_followers(diff ? diff : components)
-      release
-    else
-      false
-    end
+    return false if components.empty?
+
+    components = components.delete_if {|k, v| v.nil? }
+    release = add_release(:components => components, :diff => diff)
+    update_followers(diff ? diff : components)
+    release
   end
 
   private
@@ -45,17 +46,25 @@ class Manifest < Sequel::Model
   end
 
   def merge_follower(components)
-    follower_override ? components.merge(follower_override) : components
+    follower_override ? components.deep_merge(follower_override) : components
   end
 
   def merge_current(components)
     if current && current_components = current.components
       diff = components
-      components = current_components.merge(components)
+      components = current_components.deep_merge(components)
       components = {} if components == current.components
     end
 
     [components, diff]
+  end
+
+  def scope_for(components, scope)
+    scope.split('/').reverse.inject({}) do |hash, s|
+      hash = { s => components }
+      components = hash
+      hash
+    end
   end
 
   def validate
