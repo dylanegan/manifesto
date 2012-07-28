@@ -18,17 +18,17 @@ describe 'Release' do
     end
 
     it "should issue a version" do
-      release.version.must_equal 1
+      release.version.must_equal 2
     end
 
     it "should increment when issuing a version" do
       other_release = create_release(:manifest_id => manifest.id)
-      other_release.version.must_equal 2
+      other_release.version.must_equal 3
     end
 
     it "should increment given the manifest scope" do
       different_release = create_release(:manifest_id => create_manifest.id)
-      different_release.version.must_equal 1
+      different_release.version.must_equal 2
     end
 
     it "should store the release on S3" do
@@ -62,7 +62,7 @@ describe 'Release' do
     end
 
     it "should destroy all files if there is no release" do
-      @other_release.destroy
+      manifest.releases.each { |r| r.destroy }
       Manifesto.storage.directories.get(Manifesto.bucket).files.get("#{release.manifest.name}-current.json").must_be_nil
     end
 

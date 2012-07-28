@@ -37,7 +37,7 @@ describe Manifesto::API::V1 do
     end
 
     it "should cut a new Release for the Manifest" do
-      @manifest.releases.count.must_equal 2
+      @manifest.releases.count.must_equal 3
     end
 
     it "should merge the release components" do
@@ -112,7 +112,7 @@ describe Manifesto::API::V1 do
       post "/manifests/#{@manifest.name}/release", { 'other' => 'something', 'noir' => 'awesome' }.to_json
 
       @follower.reload
-      @follower.releases.first.components.must_equal({ 'other' => 'amazing', 'noir' => 'awesome' })
+      @follower.releases.last.components.must_equal({ 'other' => 'amazing', 'noir' => 'awesome' })
     end
 
     it "should return created" do
