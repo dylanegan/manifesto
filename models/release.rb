@@ -1,10 +1,16 @@
 class Release < Sequel::Model
+  attr_accessor :initial
+
   many_to_one :manifest
 
   plugin :json_serializer
   plugin :serialization, :json, :components, :diff
   plugin :timestamps
   plugin :validation_helpers
+
+  def initial?
+    !!initial
+  end
 
   # Public: The stored manifest
   #
@@ -110,7 +116,8 @@ class Release < Sequel::Model
   # Private: Validate the Release
   def validate
     super
-    validates_presence [:components, :version]
+    validates_presence :components unless initial?
+    validates_presence :version
   end
 
   def self.log(data, exception, &block)

@@ -12,6 +12,26 @@ describe 'Manifest' do
     end
   end
 
+  describe "on create" do
+    before do
+      manifest.save
+    end
+
+    it "should create an initial empty release" do
+      manifest.releases.count.must_equal 1
+      release = manifest.releases.first
+      release.version.must_equal 1
+      release.components.must_equal({})
+    end
+
+    describe "when forking" do
+      it "should not create an initial empty release" do
+        forked = manifest.fork(:name => 'forked')
+        forked.releases.count.must_equal 1
+      end
+    end
+  end
+
   describe "#fork" do
     before do
       manifest.save
@@ -86,7 +106,7 @@ describe 'Manifest' do
     end
 
     it "should not cut duplicate releases" do
-      manifest.releases.count.must_equal 2
+      manifest.releases.count.must_equal 3
     end
 
     describe "with scope" do

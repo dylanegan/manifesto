@@ -1,6 +1,8 @@
 require "manifesto/core_ext/hash/deep_merge"
 
 class Manifest < Sequel::Model
+  attr_accessor :forking
+
   one_to_many :followers, :class => self, :key => :followee_id
   many_to_one :followee, :class => self, :key => :followee_id
   one_to_many :releases
@@ -14,16 +16,25 @@ class Manifest < Sequel::Model
     fork(attributes.merge(:followee_id => self.id))
   end
 
+  def current
+    releases_dataset.order(:version).last
+  end
+
+  def follower?
+    !followee_id.nil?
+  end
+
   def fork(attributes)
     forked = Manifest.new
+    forked.forking = true
     forked.set_only(attributes, [:name, :follower_override, :followee_id])
     forked.save
-    forked.release(current.components) if current
+    forked.release(current.components)
     forked
   end
 
-  def current
-    releases_dataset.order(:version).last
+  def forking?
+    !!forking
   end
 
   def release(components = {}, scope = nil)
@@ -31,15 +42,21 @@ class Manifest < Sequel::Model
     components = merge_follower(components)
     components, diff = merge_current(components)
 
-    return false if components.empty?
+    return false if components.empty? && !current.nil?
 
     components = components.delete_if {|k, v| v.nil? }
-    release = add_release(:components => components, :diff => diff)
+    release = add_release(:components => components, :diff => diff, :initial => current.nil?)
     update_followers(diff ? diff : components)
-    release
+    release 
   end
 
   private
+
+  def after_create
+    unless forking?
+      release({})
+    end
+  end
 
   def before_destroy
     releases.each { |r| r.destroy }
