@@ -1,0 +1,19 @@
+#!/usr/bin/env ruby
+
+require 'sequel'
+
+env = ENV['RACK_ENV']
+DB = Sequel.connect(ENV['DATABASE_URL'] || "postgres://localhost/manifesto_#{env}")
+
+if DB.adapter_scheme == :postgres
+  begin
+    DB.run("ALTER ROLE #{DB['select current_user'].first[:current_user]} SET bytea_output TO 'escape'")
+    puts "Success, bytea_output set to 'escape'. Re-establish your database connections to use the new encoding format."
+  rescue Sequel::DatabaseError => e
+    if e.message =~ /unrecognized configuration parameter "bytea_output"/
+      puts "It looks like you are connected to a legacy postgres server that uses 'escape' output by default. Bytea fields should work as expected."
+    else
+      raise e
+    end
+  end
+end
