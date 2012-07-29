@@ -15,6 +15,7 @@ gem 'sinatra'
 gem 'thin'
 
 group :test do
+  gem 'guard-minitest'
   gem 'database_cleaner'
   gem 'minitest'
   gem 'rack-test'

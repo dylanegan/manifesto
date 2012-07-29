@@ -7,8 +7,9 @@ ENV['GOOGLE_OAUTH_DOMAIN'] = 'example.com'
 ENV['RACK_COOKIE_SECRET'] = '1234567890'
 ENV["RACK_ENV"] = 'test'
 
-require File.join(File.dirname(__FILE__), '..','lib', 'manifesto', 'application')
-require File.join(File.dirname(__FILE__), '..','lib', 'manifesto', 'api', 'v1')
+$LOAD_PATH.unshift File.join(File.dirname(__FILE__), '..','lib')
+require 'manifesto/application'
+require 'manifesto/api/v1'
 
 require 'sinatra'
 require 'rack/test'
