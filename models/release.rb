@@ -49,7 +49,7 @@ class Release < Sequel::Model
   def create_stored_manifest
     unless stored_manifest
       @stored_manifest = directory.files.new(:body => components.to_json, :key => "#{manifest.name}-#{version}.json", :content_type => 'application/json')
-      @stored_manifest.acl = 'public-read'
+      @stored_manifest.acl = 'public-read' if Manifesto.public_manifests?
       @stored_manifest.save
       create_current_manifest
     end
@@ -61,10 +61,10 @@ class Release < Sequel::Model
     if stored_manifest && latest_version == version
       retries = 0
       begin
-        stored_manifest.copy(Manifesto.bucket, "#{manifest.name}-current.json", { 'x-amz-acl' => 'public-read' })
+        stored_manifest.copy(Manifesto.bucket, "#{manifest.name}-current.json", s3_headers)
       rescue Excon::Errors::NotFound => error
         raise error unless error.response.body =~ /NoSuchKey/ &&
-                           (retries += 1) < 5
+          (retries += 1) < 5
         sleep 0.5
         retry
       end
@@ -97,9 +97,18 @@ class Release < Sequel::Model
   def ensure_current_if_current
     manifest.reload
     if current = manifest.current
-      current.stored_manifest.copy(Manifesto.bucket, "#{manifest.name}-current.json", { 'x-amz-acl' => 'public-read' }) unless current.version > self.version
+      current.stored_manifest.copy(Manifesto.bucket, "#{manifest.name}-current.json", s3_headers) unless current.version > self.version
     elsif current = directory.files.get("#{manifest.name}-current.json")
       current.destroy
+    end
+  end
+
+  # Private: S3 headers to store manifests publically or not
+  def s3_headers
+    if Manifesto.public_manifests?
+      { 'x-amz-acl' => 'public-read' }
+    else
+      {}
     end
   end
 

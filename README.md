@@ -27,6 +27,7 @@ heroku ps:scale web=1
 * `S3_BUCKET`: your S3 bucket name where you wish to store the manifests
 * `ENABLE_SSL_ENFORCER`: force SSL only
 * `GOOGLE_OAUTH_DOMAIN`: your Google oAuth domain
+* `PRIVATE_MANIFESTS`: to keep your manifests private
 * `RACK_COOKIE_SECRET`: to keep your cookies from the monsters
 
 ![](https://github.com/dylanegan/manifesto/raw/master/public/images/cookie-monster.gif)

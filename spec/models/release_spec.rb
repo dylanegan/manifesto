@@ -46,6 +46,27 @@ describe 'Release' do
     end
   end
 
+  describe "private manifests" do
+    before do
+      ENV['PRIVATE_MANIFESTS'] = "1"
+      release.save
+    end
+
+    after do
+      ENV.delete('PRIVATE_MANIFESTS')
+    end
+
+    it "should store the release on S3 privately" do
+      r = Manifesto.storage.directories.get(Manifesto.bucket).files.get("#{release.manifest.name}-#{release.version}.json")
+      r.public_url.must_equal nil
+    end
+
+    it "should set the current release on S3 privatley" do
+      current = Manifesto.storage.directories.get(Manifesto.bucket).files.get("#{release.manifest.name}-current.json")
+      current.public_url.must_equal nil
+    end
+  end
+
   describe "on destroy" do
     before do
       @other_release = create_release(:manifest_id => manifest.id)
