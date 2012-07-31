@@ -1,5 +1,6 @@
 require 'fog'
 require 'scrolls'
+require 'rack/ssl-enforcer'
 
 module Manifesto
   def self.bucket
@@ -56,6 +57,22 @@ module Manifesto
     @logging ||= false
   end
 
+  # Public: manifest accessibility
+  #
+  # Returns false if the manifests will be publically accessible (default) or true if they will be private
+  # Enabled by setting the environment variable PRIVATE_MANIFESTS
+  def self.private_manifests?
+    ENV['PRIVATE_MANIFESTS']
+  end
+
+  # Public: manifest accessibility
+  #
+  # Returns true if the manifests will be publically accessible (default) or false if they will be private
+  # Enabled by un-setting the environment variable PRIVATE_MANIFESTS
+  def self.public_manifests?
+    ! private_manifests?
+  end
+
   def self.setup_database(env)
     return @database if @database
     @database = Sequel.connect(ENV['DATABASE_URL'] || "postgres://localhost/manifesto_#{env}")
@@ -79,4 +96,3 @@ end
 require 'securerandom'
 require 'json'
 require 'sequel'
-

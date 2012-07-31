@@ -7,8 +7,9 @@ ENV['GOOGLE_OAUTH_DOMAIN'] = 'example.com'
 ENV['RACK_COOKIE_SECRET'] = '1234567890'
 ENV["RACK_ENV"] = 'test'
 
-require File.join(File.dirname(__FILE__), '..','lib', 'manifesto', 'application')
-require File.join(File.dirname(__FILE__), '..','lib', 'manifesto', 'api', 'v1')
+$LOAD_PATH.unshift File.join(File.dirname(__FILE__), '..','lib')
+require 'manifesto/application'
+require 'manifesto/api/v1'
 
 require 'sinatra'
 require 'rack/test'
@@ -33,4 +34,18 @@ class MiniTest::Spec
   after :each do
     DatabaseCleaner.clean
   end
+end
+
+def middleware_classes(app)
+  r = [app]
+
+  while ((next_app = r.last.instance_variable_get(:@app)) != nil)
+    r << next_app
+  end
+
+  r.map{|e| e.instance_variable_defined?(:@app) ? e.class : e }
+end
+
+def app_from_config(name)
+  Rack::Builder.parse_file(File.join(File.dirname(__FILE__), '..', name)).first
 end

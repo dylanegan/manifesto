@@ -13,6 +13,7 @@ heroku config:add AWS_ACCESS_KEY_ID=...
 heroku config:add AWS_SECRET_ACCESS_KEY=...
 heroku config:add S3_BUCKET=...
 heroku config:add ENABLE_SSL_ENFORCER=true
+heroku config:add PRIVATE_MANIFESTS=true
 heroku config:add GOOGLE_OAUTH_DOMAIN=...
 heroku config:add RACK_COOKIE_SECRET=...
 git push heroku master
@@ -27,6 +28,15 @@ heroku ps:scale web=1
 * `S3_BUCKET`: your S3 bucket name where you wish to store the manifests
 * `ENABLE_SSL_ENFORCER`: force SSL only
 * `GOOGLE_OAUTH_DOMAIN`: your Google oAuth domain
+* `PRIVATE_MANIFESTS`: set this to keep your manifests private
 * `RACK_COOKIE_SECRET`: to keep your cookies from the monsters
 
 ![](https://github.com/dylanegan/manifesto/raw/master/public/images/cookie-monster.gif)
+
+## File/bytea type field compatability issue
+
+There is an issue with File/bytea type fields when using an older version of the postgres client with a new postgres database. If you are having trouble getting things to work properly you can try reverting the bytea_output behavior to 'escape'.
+
+```
+heroku run bytea_output_fix
+```
