@@ -35,3 +35,17 @@ class MiniTest::Spec
     DatabaseCleaner.clean
   end
 end
+
+def middleware_classes(app)
+  r = [app]
+
+  while ((next_app = r.last.instance_variable_get(:@app)) != nil)
+    r << next_app
+  end
+
+  r.map{|e| e.instance_variable_defined?(:@app) ? e.class : e }
+end
+
+def app_from_config(name)
+  Rack::Builder.parse_file(File.join(File.dirname(__FILE__), '..', name)).first
+end

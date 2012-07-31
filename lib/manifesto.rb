@@ -1,5 +1,6 @@
 require 'fog'
 require 'scrolls'
+require 'rack/ssl-enforcer'
 
 module Manifesto
   def self.bucket

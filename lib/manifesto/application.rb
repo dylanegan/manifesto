@@ -5,7 +5,6 @@ require 'haml'
 require 'omniauth/strategies/google_apps'
 require 'openid/store/sequel'
 require 'rack/csrf'
-require 'rack/ssl-enforcer'
 
 module Manifesto
   class Application < Sinatra::Base

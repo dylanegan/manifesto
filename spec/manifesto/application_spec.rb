@@ -4,7 +4,7 @@ describe Manifesto::Application do
   include Rack::Test::Methods
 
   def app
-    Manifesto::Application
+    app_from_config('config.application.ru')
   end
 
   describe "authentication" do
@@ -35,6 +35,23 @@ describe Manifesto::Application do
         get "/auth/logout"
         last_request.env['rack.session']['user'].must_be_nil
       end
+    end
+
+    describe "enforce ssl" do
+
+      after do
+        ENV.delete('ENABLE_SSL_ENFORCER')
+      end
+
+      it "should use Rack::SslEnforcer when it is enabled" do
+        ENV['ENABLE_SSL_ENFORCER'] = "true"
+        middleware_classes(app).must_include(Rack::SslEnforcer)
+      end
+
+      it "should not use Rack::SslEnforcer when it is not enabled" do
+        middleware_classes(app).wont_include(Rack::SslEnforcer)
+      end
+
     end
   end
 end
