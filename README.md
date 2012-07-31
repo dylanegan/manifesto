@@ -32,3 +32,11 @@ heroku ps:scale web=1
 * `RACK_COOKIE_SECRET`: to keep your cookies from the monsters
 
 ![](https://github.com/dylanegan/manifesto/raw/master/public/images/cookie-monster.gif)
+
+## File/bytea type field compatability issue
+
+There is an issue with File/bytea type fields when using an older version of the postgres client with a new postgres database. If you are having trouble getting things to work properly you can try reverting the bytea_output behavior to 'escape'.
+
+```
+heroku run bytea_output_fix
+```
