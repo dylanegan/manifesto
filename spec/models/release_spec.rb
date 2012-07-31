@@ -48,7 +48,7 @@ describe 'Release' do
 
   describe "private manifests" do
     before do
-      ENV['PRIVATE_MANIFESTS'] = "1"
+      ENV['PRIVATE_MANIFESTS'] = "true"
       release.save
     end
 
