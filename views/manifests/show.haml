@@ -20,6 +20,9 @@
       - @manifest.releases_dataset.order(:version).reverse.each do |release|
         %tr{:id => "release-#{release.id}"}
           %td.version
-            %a{:href => "https://#{Manifesto.bucket}.s3.amazonaws.com/#{@manifest.name}-#{release.version}.json"}= release.version
+            - if Manifesto.public_manifests?
+              %a{:href => "https://#{Manifesto.bucket}.s3.amazonaws.com/#{@manifest.name}-#{release.version}.json"}= release.version
+            - else
+              = release.version
           %td.diff= release.diff
           %td.created_at= release.created_at
