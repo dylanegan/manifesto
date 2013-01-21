@@ -50,21 +50,6 @@ module Manifesto
       "You're logged out. <a href='/'>Login</a>"
     end
 
-    post '/auth/google_apps/callback' do
-      unless session['user']
-        user = env['omniauth.auth']['info']
-        email = user['email'].is_a?(Array) ? user['email'].first : user['email']
-        email = email.downcase
-        session['user'] = {
-          'identity_url' => env['omniauth.auth']['uid'],
-          'email' => email,
-          'first_name' => user['first_name'],
-          'last_name' => user['last_name']
-        }
-      end
-      redirect to('/')
-    end
-
     get('/auth/google_apps/callback') { google_apps_callback }
     post('/auth/google_apps/callback') { google_apps_callback }
 
@@ -138,7 +123,7 @@ module Manifesto
 
     def google_apps_callback
       unless session['user']
-        user = env['omniauth.auth']['user_info']
+        user = env['omniauth.auth']['info']
         email = user['email'].is_a?(Array) ? user['email'].first : user['email']
         email = email.downcase
         session['user'] = {

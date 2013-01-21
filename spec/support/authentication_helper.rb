@@ -31,11 +31,11 @@ def user_attributes
   {
     "provider" => "google_apps",
     "uid" => "http://example.com/openid?id=1234567890",
-    "user_info" => {
-    "email" => "nika@example.com",
-    "first_name" => "Nika",
-    "last_name" => "the Dog",
-    "name" => "Nika the Dog"
-  }
+    "info" => {
+      "email" => "nika@example.com",
+      "first_name" => "Nika",
+      "last_name" => "the Dog",
+      "name" => "Nika the Dog"
+    }
   }
 end
