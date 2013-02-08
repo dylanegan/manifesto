@@ -22,6 +22,7 @@ module Manifesto
     set :haml, :escape_html => true
 
     use Rack::Session::Cookie, :key => 'rack.session',
+      :coder => Rack::Session::Cookie::Base64::JSON.new,
       :expire_after => 1209600,
       :secret => ENV['RACK_COOKIE_SECRET'] || raise("missing RACK_COOKIE_SECRET")
 
