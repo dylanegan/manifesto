@@ -58,7 +58,7 @@ GEM
       ruby-openid
       sequel
     pg (0.13.2)
-    rack (1.3.5)
+    rack (1.5.2)
     rack-mount (0.8.3)
       rack (>= 1.0.0)
     rack-openid (1.3.1)
